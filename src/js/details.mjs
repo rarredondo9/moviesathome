@@ -1,3 +1,4 @@
+// Entry point for details.html
 import ExternalServices from './ExternalServices.mjs';
 import MovieDetails from './MovieDetails.mjs';
 import { qs, getParam} from './utils.mjs';

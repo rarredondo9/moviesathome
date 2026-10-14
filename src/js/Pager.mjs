@@ -1,3 +1,4 @@
+// Controls the Previous and Next buttons
 import { qs } from './utils.mjs';
 
 export default class Pager {
@@ -13,6 +14,7 @@ export default class Pager {
         this.nextButton.addEventListener('click', () => this.onPageChange(this.page +1));
     }
 
+    // Refreshes the text and buttons after each load
     update(page, totalPages) {
         this.page = page;
         this.navElement.hidden = totalPages <= 1;

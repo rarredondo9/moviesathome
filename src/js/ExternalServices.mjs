@@ -1,11 +1,14 @@
+// All requests to the TMDb and OMDb APIs
 import { convertToJson } from "./utils.mjs";
 
+// API addresses and keys (from.env)
 const baseURL = "https://api.themoviedb.org/3";
 const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 const omdbURL = 'https://www.omdbapi.com/';
 const omdbKey = import.meta.env.VITE_OMDB_API_KEY;
 
 export default class ExternalServices {
+  // Gets genre list for movie or tv
   async getGenres(mediaType = "movie") {
     const response = await fetch(
       `${baseURL}/genre/${mediaType}/list?api_key=${apiKey}`,
@@ -13,7 +16,7 @@ export default class ExternalServices {
     const data = await convertToJson(response);
     return data.genres;
   }
-
+  // Gets one page of popular titles, filtered by genre
   async discover(mediaType = "movie", genreID = "", page = 1) {
     let url = `${baseURL}/discover/${mediaType}?api_key=${apiKey}&sort_by=popularity.desc&page=${page}`;
     if (genreID) {
@@ -22,7 +25,7 @@ export default class ExternalServices {
     const response = await fetch(url);
     return convertToJson(response);
   }
-
+  // Gets one page of search results for a title
   async search(mediaType = "movie", query = "", page = 1) {
     const encodedQuery = encodeURIComponent(query.trim());
     const response = await fetch(
@@ -30,14 +33,14 @@ export default class ExternalServices {
     );
     return convertToJson(response);
   }
-
+  // Gets one title's details in a single request
   async getDetails(mediaType, id) {
     const response = await fetch(
       `${baseURL}/${mediaType}/${id}?api_key=${apiKey}&append_to_response=videos,credits,external_ids`,
     );
     return convertToJson(response);
   }
-
+  // Gets IMDb and Rotten Tomatoes ratings
   async getRatings(imdbId) {
     const response = await fetch(`${omdbURL}?apikey=${omdbKey}&i=${imdbId}`);
     const data = await response.json();

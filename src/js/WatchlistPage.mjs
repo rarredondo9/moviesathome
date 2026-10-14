@@ -1,5 +1,7 @@
+// Draws the watchlist page and handles Remove buttons
 import { getPosterUrl, renderListWithTemplate, setStatus, escapeHtml } from './utils.mjs';
 
+// Builds one saved card. The remove button sits outside the link so clicking it does not open the details page
 function watchlistCardTemplate(item) {
     const title = escapeHtml(item.title);
     const poster = getPosterUrl(item.posterPath);
@@ -23,9 +25,12 @@ export default class WatchlistPage {
         this.watchlist = watchlist;
     }
 
+    // Draws the saved titles and listens for Remove clicks
     init() {
         this.render();
 
+        // One listener on the list handles every Remove button
+        // The card's data attributes says which title to remove
         this.listElement.addEventListener('click', (event) => {
             const button = event.target.closest('.remove-button');
             if (!button) {
@@ -37,6 +42,7 @@ export default class WatchlistPage {
         });
     }
 
+    // Shows the saved titles
     render () {
         const items = this.watchlist.getAll();
 

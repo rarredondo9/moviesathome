@@ -1,6 +1,8 @@
+// Builds the details page for one movie or TV show
 import { getPosterUrl, formatRuntime, setStatus, qs, escapeHtml } from "./utils.mjs";
 import Watchlist from "./Watchlist.mjs";
 
+// Trailer section: YouTube embed, or message if there is none
 function trailerTemplate(item) {
     const videos = (item.videos && item.videos.results) || [];
     const trailer = videos.find((video) => video.site === 'YouTube' && video.type === 'Trailer');
@@ -18,6 +20,7 @@ function trailerTemplate(item) {
         </div>`;
 }
 
+// Cast section: the first 10 people with picture, name and character.
 function castTemplate(item) {
     const cast = ((item.credits && item.credits.cast) || []).slice(0, 10);
 
@@ -43,6 +46,7 @@ function castTemplate(item) {
     return `<ul class="cast-list">${members}</ul>`;
 }
 
+// Main page content.
 function ratingsTemplate(data) {
     const items = (data.Ratings || [])
         .map((rating) => `<li class="ratings__item">
@@ -70,8 +74,10 @@ function detailsTemplate(item) {
         ? `<img src="${poster}" alt="Poster for ${title}">`
         : '<div class="no-poster">No image</div>';
 
+        //Shows only the facts that exist
     const facts = [year, runtime, genres].filter(Boolean).join(' &middot; ');
 
+    // the reatings box is filled in later.
     return `<div class="details__poster">${image}</div>
         <div class="details__info">
             <h2>${title}</h2>
@@ -82,7 +88,7 @@ function detailsTemplate(item) {
             <p class="details__empty">Loading ratings...</p>
             </div>
             <button type="button" id="watchlist-button" class="watchlist-button">Add to watchlist</button>
-            <p id="watchlist-message" class="watchlist-message" role="status" aria-live="polite">
+            <p id="watchlist-message" class="watchlist-message" role="status" aria-live="polite"></p>
         </div>
         <section class="details__extras">
             <h3>Trailer</h3>
@@ -101,8 +107,10 @@ export default class MovieDetails {
         this.services = services;
         this.watchlist = new Watchlist();
     }
-
+    
+    //Loads the title from TMDb and drws the page
     async init() {
+        // Guard against a missing or edited URL
         if (!this.id || !['movie', 'tv'].includes(this.mediaType)) {
             setStatus(this.statusElement, 'Sorry, we could not find that title.', true);
             return;
@@ -114,10 +122,12 @@ export default class MovieDetails {
             setStatus(this.statusElement);
             this.container.innerHTML = detailsTemplate(item);
             document.title = `${item.title || item.name} | Movies at Home`;
+            // Give each title its own meta description
             const summary = (item.overview || '').slice(0, 150);
             if(summary) {
                 document.querySelector('meta[name="description"]').setAttribute('content', summary);
             }
+            // Ratings load separately so a slow OMDb never blocks the page.
             this.loadRatings(item);
             this.setupWatchlistButton(item);
         } catch (error) {
@@ -125,8 +135,10 @@ export default class MovieDetails {
         }
     }
 
+    // Looks up ratings on OMDb never blocks the page.
     async loadRatings(item) {
         const ratingsBox = qs('#ratings', this.container);
+        // Movies have imdb_id directly; external_ids for TV
         const imdbId = item.imdb_id || (item.external_ids && item.external_ids.imdb_id);
 
         if (!imdbId) {
@@ -142,10 +154,11 @@ export default class MovieDetails {
         }
     }
 
+    // Makes the button text match wether the title is saved
     setupWatchlistButton(item) {
         const button = qs('#watchlist-button', this.container);
-        const title = item.title || item.name;
         const message = qs('#watchlist-message', this.container);
+        const title = item.title || item.name;
         const entry = {
             id: item.id,
             mediaType: this.mediaType,
@@ -162,17 +175,22 @@ export default class MovieDetails {
             const added = this.watchlist.toggle(entry);
             refreshButton();
 
+            // Play the pop animation only when a title is added
             if (added) {
                 button.classList.add('is-popping');
             }
             setStatus(
                 message,
-                added ? `Added "${title}" to your watchlist.` : `Removed "${title} from your watchlist.`
+                added ? `Added "${title}" to your watchlist.` : `Removed "${title}" from your watchlist.`
             );
         });
 
+        //Remove the class when the animation ends so it can play again
         button.addEventListener('animationend', () => {
             button.classList.remove('is-popping');
         });
+
+        // Set the correct button text when the page first loads
+        refreshButton();
     }
 }

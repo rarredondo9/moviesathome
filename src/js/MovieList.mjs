@@ -1,5 +1,7 @@
+// Loads and draws grid of movie or TV
 import {getPosterUrl, renderListWithTemplate, setStatus, escapeHtml} from './utils.mjs';
 
+// Builds the HTML for one card
 function movieCardTemplate(item, mediaType) {
     const title = escapeHtml(item.title || item.name);
     const date = item.release_date || item.first_air_date || '';
@@ -30,12 +32,15 @@ export default class MovieList {
         this.emptyMessage = '';
     }
 
+    // Shared by browse and search
+    // fetchPage is a callback that takes a page number and returns the data
     async load(fetchPage, page = 1, emptyMessage = 'No results found.') {
         this.fetchPage = fetchPage;
         this.emptyMessage = emptyMessage;
         setStatus(this.statusElement, 'Loading...');
         try {
             const data = await fetchPage(page);
+            // TMDb does not serve pages past 500
             const totalPages = Math.min(data.total_pages, 500);
 
             if (data.results.length === 0) {
@@ -56,10 +61,12 @@ export default class MovieList {
         }
     }
 
+    // Shows popular titles, (optionally by genre)
     init(genreId = '') {
         return this.load ((page) => this.services.discover(this.mediaType, genreId, page));
     }
 
+    // Shows search results for a title
     search(query) {
         return this.load(
             (page) => this.services.search(this.mediaType, query, page), 1,
@@ -67,12 +74,14 @@ export default class MovieList {
         );
     }
 
+    // Loads another page of whatever the user is viewing, then scrolss to the top
     async goToPage (page) {
         const data = await this.load(this.fetchPage, page, this.emptyMessage);
         window.scrollTo({ top: 0, behavior: 'smooth'});
         return data;
     }
 
+    // Draws cards, replacing the other ones
     render(list) {
         renderListWithTemplate(
             (item) => movieCardTemplate(item, this.mediaType),
