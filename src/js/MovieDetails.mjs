@@ -14,7 +14,6 @@ function trailerTemplate(item) {
             src="https://www.youtube-nocookie.com/embed/${trailer.key}"
             title="Trailer for ${escapeHtml(item.title || item.name)}"
             allow="fullscreen"
-            allowfullscreen
             loading="lazy"></iframe>
         </div>`;
 }
