@@ -115,6 +115,10 @@ export default class MovieDetails {
             setStatus(this.statusElement);
             this.container.innerHTML = detailsTemplate(item);
             document.title = `${item.title || item.name} | Movies at Home`;
+            const summary = (item.overview || '').slice(0, 150);
+            if(summary) {
+                document.querySelector('meta[name="description"]').setAttribute('content', summary);
+            }
             this.loadRatings(item);
             this.setupWatchlistButton(item);
         } catch (error) {

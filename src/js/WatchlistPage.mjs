@@ -10,7 +10,7 @@ function watchlistCardTemplate(item) {
     return `<li class="movie-card" data-id="${item.id}" data-media-type="${item.mediaType}">
         <a href="/details.html?id=${item.id}&amp;type=${item.mediaType}" class="movie-card__link">
             ${image}
-            <h2 class="movie-card__title">${title}</h2>
+            <h3 class="movie-card__title">${title}</h3>
             </a>
             <button type="button" class="remove-button" aria-label="Remove ${title} from watchlist">Remove</button>
     </li>`;

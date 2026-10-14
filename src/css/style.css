@@ -559,3 +559,24 @@ iframe {
     max-width: 100%;
 }
 
+.skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    padding: 0.5rem 1rem;
+    background: var(--yellow);
+    color: var(--navy);
+    font-weight: bold;
+    border-radius: 8px;
+    z-index: 10;
+}
+
+.skip-link:focus {
+    top: 1rem;
+}
+
+::placeholder {
+    color: #595959;
+    opacity: 1;
+}
+
