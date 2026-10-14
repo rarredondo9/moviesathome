@@ -42,8 +42,6 @@ qs("#search-form").addEventListener("submit", (event) => {
   }
 });
 
-services.getDetails("movie", 550).then((data) => console.log("Details", data));
-
 qs('#home-link').addEventListener('click', (event) => {
   event.preventDefault();
   searchInput.value = '';
