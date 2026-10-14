@@ -259,7 +259,7 @@ button:hover:not(:disabled) {
 }
 
 :focus-visible {
-    outline: 3px solid var(--orange);
+    outline: 3px solid var(--navy);
     outline-offset: 2px;
 }
 
@@ -467,7 +467,7 @@ button:hover:not(:disabled) {
     }
     to {
         opacity: 1;
-        transform: translateY();
+        transform: translateY(0);
     }
 }
 
@@ -512,3 +512,50 @@ button:hover:not(:disabled) {
         transition: none !important;
     }
 }
+
+.movie-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+}
+
+.movie-card__title, 
+.details__info h2, 
+.cast-member__name {
+    overflow-wrap: anywhere;
+}
+
+button,
+#media-toggle label, 
+header nav a {
+    min-height: 44px;
+}
+
+button,
+header nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 0.75rem;
+    }
+
+    #search-form {
+        padding-left: 1rem;
+    }
+
+    #search-form button {
+        padding: 0.6rem 1rem;
+    }
+
+    .hero {
+        margin: 1.25rem 0 1rem;
+    }
+}
+
+img,
+iframe {
+    max-width: 100%;
+}
+
